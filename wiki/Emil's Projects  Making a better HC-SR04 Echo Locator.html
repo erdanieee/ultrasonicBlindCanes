@@ -1,0 +1,908 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0083)http://uglyduck.ath.cx/ep/archive/2014/01/Making_a_better_HC_SR04_Echo_Locator.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Emil's Projects: Making a better HC-SR04 Echo Locator</title>
+    
+    <link rel="stylesheet" type="text/css" media="screen" href="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/style.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/vim.css">
+
+    <link rel="alternate" title="Comment Feed" href="http://uglyduck.ath.cx/ep/archive/2014/01/Making_a_better_HC_SR04_Echo_Locator.rss" type="application/rss+xml">
+
+  </head>
+  <body>
+    <div class="title">
+      <h1>
+        <a href="http://uglyduck.ath.cx/ep/">Emil's Projects</a>
+        
+      </h1>
+      
+      <h2>OpenHardware &amp; OpenSource</h2>
+      
+    </div>
+    <div class="entry">
+      <div class="title">Making a better HC-SR04 Echo Locator
+        <span class="date">22nd January 2014</span>
+      </div>
+      <div class="body"><p>I have bought several cheap echo location circuits from <a href="http://www.aliexpress.com/wholesale?SearchText=HC-SR04">AliExpress</a> and I'm planning to use them in one of my robotics projects.</p>
+
+<table class="center" style="text-align:center;;margin-left:auto;margin-right:auto" cellspacing="0"><tbody><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04-front.jpg"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-HC-SR04-front.jpg" alt=""></a></td><td><a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04-back.jpg"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-HC-SR04-back.jpg" alt=""></a></td></tr><tr><td><strong>HC-SR04 Front View</strong></td><td><strong>HC-SR04 Back View</strong></td></tr></tbody></table>
+
+<p class="justify" style="text-align:justify">They are very cheap especially if you buy a dozen you can get them bellow 2$ shipped.<br>
+Once they've arrived, to test them, I wrote a quick <a href="http://uglyduck.ath.cx/HC-SR04E/echo.c">C test program</a> for an <span class="caps">AVR </span>board which displays the distance in cm to an obstacle. The results were pretty accurate for as far as 3-4m distance for hard obstacles. Unfortunately when there are no obstacles in front of this detector or when the obstacles don't have hard surfaces then erroneous results are returned.</p>
+
+<p>I wanted to understand why this was happening so the first step was to reverse the HC-SR04 module schematic.</p>
+
+<p><cut></cut></p>
+
+<p class="justify" style="text-align:justify">The circuit <a href="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/HC-SR04.svgz"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/HC-SR04.svgz" alt="" height="200" width="300"></a> has 2 transducers one for emission and one for reception. To transmit the ultrasonic pulses a relatively high voltage is needed. A <span class="caps">MAX232 </span>(U3) is cleverly used to produce +/-10V (which are the normal <span class="caps">USART </span>voltages) from 5V. The transducer is connected between two outputs so it is in fact powered at 20V. Power is only applied to this circuit through Q2 some time before and during pulse emission because the internal switching charge-pump is noisy. When the circuit switches to receive mode the <span class="caps">MAX232 </span>power is cut off. The receive and emit circuits are controlled by an <span class="caps">EM78P153S </span>chinese microcontroller running at 27MHz.<br>
+The receiver side uses <span class="caps">LM324 </span>which contains 4 <span class="caps">OPAMP</span>s. <span class="caps">U2D </span>is just a times 6 amplifier. <span class="caps">U2C </span>is a multiple feedback (1st order) pass band filter which is followed by another times 8 amplifier (U2B). The last <span class="caps">OPAMP </span>(U2A) is used together with Q1 as a hysteresis comparator. I've simulated the <a href="http://uglyduck.ath.cx/HC-SR04E/EchoFilter_Spice.svgz">filter in PSpice</a> and it is not centered at 40KHz as it should be but instead it has a 18KHz peak. By changing just two resistors (R13 to 2K2 and <span class="caps">R11 </span>to 18K) the filter response is shifted to the pulse frequency and this greatly improves the detection sensitivity.</p>
+
+<table class="center" style="text-align:center;;margin-left:auto;margin-right:auto" cellspacing="0"><tbody><tr><td><a href="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/EchoFilter_18KHz.svgz"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/EchoFilter_18KHz.svgz" alt="" height="200" width="400"></a></td><td><a href="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/EchoFilter_40KHz.svgz"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/EchoFilter_40KHz.svgz" alt="" height="200" width="400"></a></td></tr><tr><td><strong>Bandpass filter centered at 18KHz</strong></td><td><strong>Bandpass filter centered at 40KHz</strong></td></tr></tbody></table>
+
+<p>Bellow are some waveforms captured from the circuit. If you want to see them in detail I have saved all traces in <span class="caps">VCD </span>format <a href="http://uglyduck.ath.cx/HC-SR04E/traces">here</a> and you can use the free gtkwave viewer to analyse them.</p>
+
+<table class="center" style="text-align:center;;margin-left:auto;margin-right:auto" cellspacing="0"><tbody><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/fixed-obstacle.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-fixed-obstacle.png" alt=""></a></td></tr><tr><td>Regular pulses from a fixed hard surface</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/typical-capture.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-typical-capture.png" alt=""></a></td></tr><tr><td>Typical waveforms for one echo detection</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/init-echo.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-init-echo.png" alt=""></a></td></tr><tr><td>8 pulses at 40KHz are emitted</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/echo-after-filter.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-echo-after-filter.png" alt=""></a></td></tr><tr><td>the echo is longer because of the filter response and multiple reflections</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/soft-obstacle.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-soft-obstacle.png" alt=""></a></td></tr><tr><td>echo when the obstacle has soft surfaces - only some echoes are valid</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/random-echoes.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-random-echoes.png" alt=""></a></td></tr><tr><td>random echoes are returned when there is no obstacle in front</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/random-echoes-zoom.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-random-echoes-zoom.png" alt=""></a></td></tr><tr><td>zoom in on random echoes</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/retrigger-bad.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-retrigger-bad.png" alt=""></a></td></tr><tr><td>retrigger problem when no echo is received</td></tr><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/trigger-only-1s.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-trigger-only-1s.png" alt=""></a></td></tr><tr><td>false readings even when triggers are 1s apart (all reflections have died off)</td></tr></tbody></table>
+
+<p class="justify" style="text-align:justify">After the trigger input is raised the uP detects it and after some 10us powers on the <span class="caps">MAX232.</span> After 248us, time to ramp up the +/-10V of the charge-pump, the 8 pulses 40KHz train is produced and then the power is switched off. During this time the comparator threshold is also kept low to prevent any spurious signals to be detected in the receiver. The circuit then asserts the echo signal and waits for the echo to return. As soon as the first pulse is detected in the receiver the echo signal is deasserted and one can measure the width of the echo pulse to calculate the obstacle distance.<br>
+There are several problems with this circuit. First the uP uses polling to detect a return pulse. This can be observed because sometimes only the second pulse is detected. There is no attempt to check is that first pulse is part of a 40KHz train of pulses. A noisy environment will probably produce false pulses which will pass trough the analog 40KHz filter (which has a modest 6db/octave attenuation). The circuit biggest problem is the false echo pulses which are returned when there is no obstacle in front. These have a plausible and variable range and cannot be filtered out in software.<br>
+The processor is <span class="caps">OTP </span>so cannot be reprogrammed and there is no easy way to change it and hook another one in its place. The whole circuit is made to minimise the cost to extreme. The 27MHz crystal was unmarked and when I've measured it had almost 1/1000 deviation.</p>
+
+<p class="justify" style="text-align:justify">In the end I've decided to change the processor and the board so I can improve this design. The analog part is pretty decent so I will keep all the components except the uP and the crystal. </p>
+
+<table class="center" style="text-align:center;;margin-left:auto;margin-right:auto" cellspacing="0"><tbody><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04-back.jpg"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-HC-SR04-back.jpg" alt=""></a></td><td><a href="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/HC-SR04-back.svgz"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/HC-SR04-back.svgz" alt="" height="182" width="400"></a></td></tr><tr><td colspan="2">First I've marked exactly where each component was placed on the original <span class="caps">PCB</span></td></tr></tbody></table>
+
+<table class="center" style="text-align:center;;margin-left:auto;margin-right:auto" cellspacing="0"><tbody><tr><td><a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04E-back.jpg"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-HC-SR04E-back.jpg" alt=""></a></td><td><a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04E-pcb.png"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/m-HC-SR04E-pcb.png" alt=""></a></td></tr><tr><td colspan="2">Then I've designed my own <span class="caps">PCB </span>keeping the same component locations</td></tr></tbody></table>
+
+<p class="justify" style="text-align:justify">I've used the AtTiny24 in a <span class="caps">SOIC14 </span>package with a 12MHz crystal. This is the new <a href="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/HC-SR04E.svgz"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/HC-SR04E.svgz" alt="" height="200" width="300"></a> HC-SR04E Schematic (I've appended an 'E' to the module name), the <a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04E.BOM">Bill of Materials</a> and the <a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04E.zip">Gerber files</a> or <a href="http://uglyduck.ath.cx/HC-SR04E/HC-SR04E-panel.zip">Gerber panel</a> if you want to use the cheap ITeadStudio <span class="caps">PCB </span>manufacture and get 20pcs for a tenner. Soldering one of these new boards takes about 20 minutes. The way I do it is by placing the original and new <span class="caps">PCB </span>side by side and desoldering the components from one with a hot air rework station and soldering them back in the same position on the new board. In this way I don't have to pay attention to component's values. Also notice that there are now 6 pins instead of the 4 on the old connector. </p>
+
+<p>The advantages of this new schematic are:<br>
+* The <span class="caps">SPI </span>interface of the AtTiny is available at the 6 pin connector and it can be programmed in place as many times you want. <br>
+* There are 3 signal pins available instead of 2 and if you program the Reset even 4 signal pins but you'll lose the in-circuit programming.<br>
+* The received analog signal also connects to the AtTiny internal comparator so a timer with capture can be used to store all returned pulses and filter them by position and gettind rid of any potential noise.<br>
+* The <span class="caps">I2C </span>interface is available so multiple modules can be wired together and have different slave addresses.</p>
+
+<p class="justify" style="text-align:justify">I have several plans with these new boards. First I'll just re-implement the original functionality with one Trigger and one Echo output while correcting the false echoes problem. Then I'll make an <span class="caps">I2C </span>version where the module triggers itself and computes the distance in 'mm' locally and stores it as a 2 byte value. Another master processor asynchronously reads this data only when needed. One of the available pins will signal a proximity condition when the distance decreases under a certain value. Another iteration will use an open drain pin to sync the emission of several modules to be able to use multiple sensors on the same robot without having to wait for each one to complete a measurement.  <span class="caps">AVR </span>software to follow when I'll have some more time available.</p>
+
+<p class="right" style="text-align:right"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/Work-in-Progress.jpg" alt=""></p>
+
+<p></p></div>
+      
+      <div class="tags">Tags: <a href="http://uglyduck.ath.cx/ep/tags/avr">avr</a>, <a href="http://uglyduck.ath.cx/ep/tags/hc-sr04">hc-sr04</a>, <a href="http://uglyduck.ath.cx/ep/tags/ultrasound">ultrasound</a>.</div>
+      
+    </div>
+    
+ <h3>Comments On This Entry</h3>
+ <blockquote>
+ 
+  <div class="comment">
+  <div class="title">Tom
+    <span class="date">Submitted at 10:06:28 on 16 March 2014</span>
+  </div>
+  <div class="body">
+Good work! What is the schematic/PCB package that you use?
+Thanks, Tom
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 13:57:15 on 16 March 2014</span>
+  </div>
+  <div class="body">
+OrCAD/Layout v15.7
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Mike
+    <span class="date">Submitted at 21:22:17 on 16 March 2014</span>
+  </div>
+  <div class="body">
+And you will be selling assembled and tested versions when?
+<br>
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 22:05:24 on 16 March 2014</span>
+  </div>
+  <div class="body">
+I do not plan to sell anything. The design is open source so if someone wants to pick it up when it's finished they are welcomed.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">John
+    <span class="date">Submitted at 01:57:41 on 17 March 2014</span>
+  </div>
+  <div class="body">
+Great work.  DO you happen to know what the physical difference is between the Tx and Rx transducers?
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 16:06:16 on 17 March 2014</span>
+  </div>
+  <div class="body">
+The transducers have the same physical dimentions, they look the same but they are marked differently. I haven't tried to swap them though. A few years ago I remember designing an echo locator with the same transducer used for both emit and receive but the HV was produced with a transformer and it was as high as 400V. The gain on the receive side was also much higher.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Geebles
+    <span class="date">Submitted at 11:29:49 on 18 March 2014</span>
+  </div>
+  <div class="body">
+Have you tested the range/sensitivity to soft objects? I'd be interested to know this for use over grass! Could higher power be used by using so other source to generate a higher voltage? to increase range/clarity of pulses? Looking forward to firmware to come out as i'd be interested in trying this out!
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 16:05:34 on 18 March 2014</span>
+  </div>
+  <div class="body">
+I have not tested the original design sensitivity rigorously. Chairs made of fabric were detected to about 1m. The design I was describing in the comment above was for a 3m diameter quadcopter with one transducer on each arm. On grass the precision was in the cm range and it was working up to 1.5m. I very much doubt that this $2 sensor can sense the grass above 50cm.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Chris
+    <span class="date">Submitted at 17:28:40 on 18 March 2014</span>
+  </div>
+  <div class="body">
+I can't help but wonder: 
+Why is a two-transducer design less expensive to manufacture than a single-transducer circuit?
+So many inexpensive sensor modules use two, so there must be a very good reason. I'm just curious to learn.
+
+Another question:
+If the new AtTiny software stores all returned pulses, an exciting new possibility opens up. Multiple object detection!
+If there at two objects - let's say 1m and 2m - we should receive sixteen pulses in two groups of 8. It could even be useful to know the amplitude of each reflection.
+The return value would need to be a more complex data structure, perhaps one byte for number of reflections, two bytes per reflection for distance and one byte per reflection for amplitude.
+It may even be possible to estimate the size of a single object.
+
+A great post, you've really got my mind going now!
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 18:10:46 on 18 March 2014</span>
+  </div>
+  <div class="body">
+A two transducer design is less expensive because you don't need to use an analog switch. This switch must block high voltage on the receive side while also having low impedance so that it won't attenuate the received pulses. I remember in my design I've used PIN diodes to protect the receiver side but some of the emission power was dissipated on this input protection circuit.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Domen
+    <span class="date">Submitted at 15:47:18 on 19 March 2014</span>
+  </div>
+  <div class="body">
+Hi! Nice project! Thanks for putting it out there, that I can buy this sensor for this cheap :D Just orderd 10 of then from Aliexpres for $12.5. Also, do you have a time frame for the firmware?
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 21:09:39 on 19 March 2014</span>
+  </div>
+  <div class="body">
+The time frame is: whenever I have time. I'm doing this hobby in my spare time and that is a limited resource. If you're in a hurry you can always program it yourself. It's not a hard program to write.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">miceuz
+    <span class="date">Submitted at 21:19:43 on 21 March 2014</span>
+  </div>
+  <div class="body">
+great stuff, thanks for sharing. Now probably I will desolder piezo elements from the board I have and breadboard it around. 
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Yogesh tiwade
+    <span class="date">Submitted at 17:58:05 on 6 April 2014</span>
+  </div>
+  <div class="body">
+HC-SR04 it is a great kit of ultrasonic tx &amp; rx using 8051..... It a very nice ideal to make a mini project &amp; also used it future for maga project...
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">RiGonz
+    <span class="date">Submitted at 07:41:01 on 17 April 2014</span>
+  </div>
+  <div class="body">
+Hi, Emil! Quite impressed by your work.
+Though I'm just an Arduino amateur I've got a question which you seem quite qualified to answer (and as far as I have searched internet and I can judge, probably the best one). 
+I am trying to use two HC-SR04, so that I can send the ping from one, and read the travelling time on the other. (The reason is that I expect accuracy to be increased, as well as,maybe, the screening range). Then: do you think this can be achieved just from the software side? (I do not even think of desoldering the "drums"!) 
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 11:12:25 on 17 April 2014</span>
+  </div>
+  <div class="body">
+With current configuration you can only send the pulses from both at the same time. These will not be in sync because each module has its own clock and the detection of your start impulse is done with pooling. Nevertheless the time shift will not be greater that one impulse period so your error will be minimal. The biggest problem are the false impulses detected when there is no obstacle (at least this happens with the modules I have). This is what I'm trying to improve with my new design. I plan to use 6 of these (all synced together) on a balanced robot and some additional IR sensors.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Jim Remington
+    <span class="date">Submitted at 02:59:54 on 18 April 2014</span>
+  </div>
+  <div class="body">
+Nice work! I also had the idea to improve the circuitry, and am glad you were ahead. However, I'm puzzled by the function of U2C, which is appears to be a filter. I used LTSpice to simulate the basic U2C module using the component values you specify on the schematic, and from the AC sweep analysis, it appears that the overall gain peaks at 20 kHz, at -28 dB and drops off from there to -40 dB 12 and 36 kHz. That doesn't make much sense to me, so I wonder if you are certain of the capacitor values associated with the feedback path of U2C.  You can email me for the spice file if you like.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Jim Remington
+    <span class="date">Submitted at 03:13:06 on 18 April 2014</span>
+  </div>
+  <div class="body">
+I can get the filter to peak at about 40 kHz if C3 is 220 pF,
+but the gain is still quite low, at -26 dB.
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 13:25:15 on 26 April 2014</span>
+  </div>
+  <div class="body">
+Hi Jim. Thanks for pointing this out. I've used an RLC meter measure all components and I don't think I've mixed anything up (but it's still possible). When I'll build my next module I'll measure the caps again. If you are right then I'll redesign the filter to be centered at 40KHz. I already have the schematic in OrCAD so I'll use its own Spice simulation.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Jim Remington
+    <span class="date">Submitted at 01:28:58 on 28 April 2014</span>
+  </div>
+  <div class="body">
+Hi, Emil:
+
+I played around a bit more using LTSpice (using C3=220 pF), and if I use a .tran transient analysis simulation with a 100 mV AC signal source, I get a gain of 5 (15 dBV) at 40 kHz . The gain drops off as expected from 40 kHz.
+
+However, if I use "small signal" AC analysis, the gain is reported to be -6 dB (in contrast to what I stated before). 
+
+I don't understand why the two different analytical approaches should disagree about the gain, but they do agree that the peak response is at 40 kHz. Does your circuit simulation produce similar conflicting results?
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 23:14:45 on 28 April 2014</span>
+  </div>
+  <div class="body">
+You may have saturated your OpAmp with 100mV of signal (you only have 2.5V of "swing" available). You were right, the filter peaks at 18KHz and the voltage gain is 180. I've changed 2 resistors to center the filter at 40KHz.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Jim Remington
+    <span class="date">Submitted at 01:54:19 on 29 April 2014</span>
+  </div>
+  <div class="body">
+Emil: The problem I had with LTSpice is that the small signal .ac analysis seems to assume 1 VAC on the input. If you provide a different signal amplitude, the gain is incorrectly calculated. Both approaches now assign a gain of 15 dB to my version of the second op-amp filter (with C3=220 pF).
+
+Cheers, Jim
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Nigel Gourlay
+    <span class="date">Submitted at 06:16:45 on 29 April 2014</span>
+  </div>
+  <div class="body">
+First, thanks Emil. I'd started my own project along the same lines before I found you're page. I've ordered some boards and in the meantime am building a through-hole version on stripboard so I can get started on the code.
+
+The only alteration from the BOM is C3=220pF to tune the OpAmp to 40kHz?
+
+Also, I see that C1 and R3 are mislabelled on the board for future versions.
+
+Just to check - the package size is 0603 (1608 metric) for all the passives, and all capacitors are ceramic multilayer?
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Bernhard
+    <span class="date">Submitted at 09:00:06 on 3 May 2014</span>
+  </div>
+  <div class="body">
+Emil: Nice project. I'm currently trying to do the same, but replacing the OTP uP by an attiny2313, then I found your webbpage. I'm wondering if you will provide your source for your attiny solution. I'm interested to adapt your source to my attiny2313 solution.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">ikku
+    <span class="date">Submitted at 16:00:43 on 14 May 2014</span>
+  </div>
+  <div class="body">
+First of all, good idea!! The original sr04 could use some improvements. But I tried the design in LTspice and when I use an input (sinusoid, 40Khz) of 0.1V the comparator (U2A) starts to do something, but I do not see any hysteresis, and the output is clipped. When I input only 0.01V or lower (sinusoid again) the output signal is a nice sinusoid of only 1.5mVtt, but U2A does not do very much. What am I doing wrong? Also when I see the datasheet of the original EM78P153S it does not have any Analog input capabilities, so how does that work in the original sr04 module? You can shed any light on these issues?
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Sverre Holm
+    <span class="date">Submitted at 00:19:40 on 30 May 2014</span>
+  </div>
+  <div class="body">
+This is a nice analysis and modification. 
+
+If you really want maximal performance, you should compensate for speed of sound variations with temperature also. As an example at 27 C, the program will underestimate range by 5 mm per m of range. This can be found if you search for "Temperature compensation for an Arduino ultrasonic distance sensor" on the LA3ZA Blog.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">drtune
+    <span class="date">Submitted at 17:52:30 on 6 June 2014</span>
+  </div>
+  <div class="body">
+Thankyou very much for this Emil; an extremely useful resource, I really appreciate your time reversing the schematic, the capture traces, and other info.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">zeuss_net
+    <span class="date">Submitted at 19:04:07 on 17 June 2014</span>
+  </div>
+  <div class="body">
+thank you Emil. I would like to use this sensor to measure the water level into a water tank but I want to do the measurement with the sensor placed in the surface of the tank but from the outside of the tank . 
+I have tested the sensor HC-SR04 without your modification but the sensor can not measure the wave transmitted into the tank. I think it is due to the threshold of signal eliminated by the amplifiers and due to the OTP software, it is possible that with your microcontroller I could study and differentiate the echo produced on the surface of the water.
+Do you think this sensor have enough power/sensibility to measure the eco produced by the transmitted wave inside the tank?.
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 01:58:00 on 20 June 2014</span>
+  </div>
+  <div class="body">
+All you can do in software is to mask some unwanted reflections. In your case the problem is not the echo from the tank which is probably almost instantaneous but the amount of power that passes on the other side. You will have massive attenuation twice, once for transmit and once for receive. I think you need to place the sensor inside the tank, if your liquid/water is not too salty you can even immerse it and get the reflection of the air/water surface.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">zeuss_net
+    <span class="date">Submitted at 12:04:11 on 20 June 2014</span>
+  </div>
+  <div class="body">
+I think this sensor is not waterproof and due to the type of transducer  (a speaker) I dont know a way to achieve a waterproofness protection, If I varnish the sensor and the rest of the board , the membrane of the speaker will not work correctly.
+May be I achieve a solution with another kind of sensor, like the car ultrasonic sensor, but this type of sensor are to expensive, do you know another type of ultrasonic sensor that can I use in contact with water? 
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 15:34:48 on 20 June 2014</span>
+  </div>
+  <div class="body">
+The transducers are electostatic, the membrane is a very light metal plate and is not affected by the water. Try it, for a $2 investment you don't risk much.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Nanko
+    <span class="date">Submitted at 15:26:14 on 21 June 2014</span>
+  </div>
+  <div class="body">
+hi Emil,
+
+I found the cause and solution for the false echo.
+The false echo is caused in empty space by the transmitter unit emitting the trigger pulse.
+The trigger pulse causes the air above the receiver unit to vibrate and this is detected by the receiver unit. The solution is to remove the receiver and transmitter unit from the printed circuit board and put them at least 10cm apart. This is what I did and now it works fine, if you don't need to measure very short distances then this solution is ok.
+Thanks for your great article and information !
+Regards, Nanko
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Spaceman
+    <span class="date">Submitted at 13:03:50 on 4 July 2014</span>
+  </div>
+  <div class="body">
+Hey Emil! Great work there! My application doesn't use the HC SR-04 per se, but we are trying to build an ultrasonic flow sensor. We've gotten the sensor alone from a dealer which has two terminals just like the "speakers" in the HC. But, there is absolutely no documentation of the same.
+Since it is a non-intrusive flow sensor, the ultrasound needs to penetrate the pipe, so I am guessing it is in essence the same circuitry as the HC with some more power, perhaps? It'd be nice if you could share something on the same. Thanks a tonnes! 
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Raj
+    <span class="date">Submitted at 06:24:11 on 7 July 2014</span>
+  </div>
+  <div class="body">
+Emil,
+
+Very nice work, thanks for sharing. As Chris suggested, I'm also interested in detecting multiple objects using this sensor and/or with some additional changes. Any thoughts or ideas?
+
+
+Best!
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Zeph
+    <span class="date">Submitted at 16:07:42 on 7 July 2014</span>
+  </div>
+  <div class="body">
+The backside photo appears to have an IC outline for another chip - do you have any idea what that might be or at least what it's function would be, if it had been soldered on?
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Zeph
+    <span class="date">Submitted at 16:25:37 on 7 July 2014</span>
+  </div>
+  <div class="body">
+Thanks for sharing your research and results.
+
+I'm not sure how the threshold output works.  So the uC holds it low while transmitting to avoid immediately triggering.  After that, does the uC pull it high, or tristate it to let it float, or use PWM to set a comparator voltage? (probably not the latter).
+
+Have you tested the range change in the real world, based on the adjusted filter?  It's strange that they would design "fairly decent" analog circuity and get the filter peak so seriously wrong, so I'm wondering if this was a bad batch or what.
+
+I'm interested in the aspect of checking that a pulse is part of a 40 KHz pulse chain.  I am imagining several software approaches to this, tho fitting them into an ATtiny would take some thought.  Do you have thoughts on that?
+
+In any case, I'm looking forward to any updates on this project as you have time; I do understand that limitation.  Electronics is a sporadic hobby for me as the other aspects of the world need attention too.
+<br>
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Can
+    <span class="date">Submitted at 03:23:06 on 10 July 2014</span>
+  </div>
+  <div class="body">
+Dear Emil,
+
+thanks for your sharing. Your work is really very nice and useful. I'm trying to do it. Can you send to me the source code for the micro controller AtTiny24?
+I have simulated the band pass filter by using of TINA Software from TI. It seams correctly, but I have make a real PCB and report the result in this site.
+Cheer.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Sebastian
+    <span class="date">Submitted at 12:28:10 on 11 July 2014</span>
+  </div>
+  <div class="body">
+Hello Emil, great work, thanks for spending the effort! FYI, there seems to be also another version of the HC-SR04 board around (I ordered a lot from Ali) which follows the same design but has a somewhat different layout, a 4MHz crystal and uses a MAX3232 instead, probably so that it could run from both 3.3V and 5V. It has also a few other changes: Trigger and Echo are swapped on P50/P67, (using your schematic identifiers) R13 and R14 are 6k8, R15 is 47k, it has no C2, R3 is 2k, R4 is 75k, the transistors are marked L6 and M6, and C16 connnects to GND instead of VCC (though the MAX3232 would accept VCC as well according to the datasheet). I did not measure the capacitors yet against your findings. Kind regards, Sebastian
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Scale
+    <span class="date">Submitted at 09:03:24 on 14 July 2014</span>
+  </div>
+  <div class="body">
+Dear Emil,
+
+I think that we need only T1IN and T1OUT and GND for the transmitter. I use 5 x 100nF for MAX232 and I get 20V (+10 and -10V) for MAX232. What do you mean?
+Cheer.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Raj
+    <span class="date">Submitted at 18:07:22 on 15 July 2014</span>
+  </div>
+  <div class="body">
+Hello Emil!
+
+Thanks for sharing your great work and details on HC-SR04. I'm wondering if you or others have any idea on how to use this sensor to send and receive higher frequency ultrasonic pulses. I'm interested in generating at 2-5 Mhz. Is that possible with the current design with some modification? My goal is to send and receive pulse through glass and I believe 40Khz will not cut it. Any other suggestions are welcome.
+
+Thank you!
+
+Raj
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 16:25:55 on 17 July 2014</span>
+  </div>
+  <div class="body">
+This won't cut it at such high frequencies. MAX232 slew-rate is limiting at 500KHz (maybe lower depending on the capacitance load), but the main limiting factor are the transducers. There's no way you can make a mechanical membrane move that fast - the membrane inertia is considerable and the accelerations/decelerations would require huge forces. The only type of sensors which _might_ work are piezoelectric ones.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Paolo
+    <span class="date">Submitted at 14:33:20 on 21 July 2014</span>
+  </div>
+  <div class="body">
+Dear Emil, I'm going build some echo locators based on your design.
+Can you tell me part number and supply of sensors you used ?
+Have a nice day.
+
+Paolo
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 01:16:40 on 23 July 2014</span>
+  </div>
+  <div class="body">
+I don't have the part numbers. I've bought a dozen modules from Aliexpress and the link is in the text above. You won't get a better price if you buy the sensors individually unless you plan to make a production batch. In that case you'd better contact the chinese manufacturers.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Zappo
+    <span class="date">Submitted at 07:52:40 on 10 August 2014</span>
+  </div>
+  <div class="body">
+Emil, Nice work.  Looks to me like U2A is an inverting gain stage and not a comparator with hysteresis.   U2A output gets inverted by Q1 and fed back by R4. Even though R4 connects to the "+" pin, the overall loop gain is negative because of the Q1 inversion. Purpose of Q1 is probably to act as a level shifter since the output high swing of of a 324 may not hit guaranteed logic "1" levels to the micro input.
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 21:44:27 on 13 August 2014</span>
+  </div>
+  <div class="body">
+I generally agree with what you say but the "-" input is not just AC grounded. The uP can change the voltage level on that input and that makes it behave more like a comparator. Also Q1 is not properly biased to work as an amplifier. When U2A output is near 0V the base is grounded and the transistor is blocked.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Scale
+    <span class="date">Submitted at 08:01:57 on 14 August 2014</span>
+  </div>
+  <div class="body">
+Hi Emil,
+
+I have now the PCB and test it. My problem is that I have only on output of comparator around 1V.
+1) can you kindly explain me the working of the comparator?
+2) how can I modify the circuit in order to get 5V at the output of the comparator?
+Thank you and best regard,
+Scale
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">vasja
+    <span class="date">Submitted at 10:29:13 on 16 September 2014</span>
+  </div>
+  <div class="body">
+Emil thanks for sharing your research. But maybe there is a problem. I replaced resistor R13 to 2K2 and R11 to 17K and start testing. At the beginning things looked ok. But then I put sensor module on the table with transducers toward table. Since then the only measurement I get is few cm regardless the actual distance in front of sensor. Looks to me that sensor died. I wonder maybe that is the reason for putting bigger resistors on original board. I saw in comments Jim proposed changing C3 to 220pF for centering filer to 40kHz. Is this approach better? Please help I am lost in analog electronics world.
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 12:32:07 on 16 September 2014</span>
+  </div>
+  <div class="body">
+You cannot destroy the circuit with a high signal amplitude regardless of the components values because in the receiver path you only have 5V and no coils. You can however destroy the sensor itself and this is what has probably happened.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Kaaruvaghi
+    <span class="date">Submitted at 17:11:18 on 16 September 2014</span>
+  </div>
+  <div class="body">
+Dear Emil:
+Would you happen to know how the voltage source is related to the range measurement? Like if I connect a 5V step-up switching regulator from 2xAA batteries the range gets reduced to less than 100 cms. There seems to be false echoes without a reflecting object, at this max range as well. But measurements within this max range is accurate. Does a lower input voltage reduce the frequency of the 40KHz/8 pulse train?
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 21:27:42 on 18 September 2014</span>
+  </div>
+  <div class="body">
+The frequency is controlled by the crystal so it won't change. Your amplitude will decrease and so will your range. You'll have to check the datasheet for MAX232 and for the chinese uP to see how low can you go. If you use a step-up regulator unless you have very good filtering and decoupling the switching noise will probably get amplified and give you false reflections. A better choice would be to use 3 or ever 4 AA batteries instead.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">joao ferreira
+    <span class="date">Submitted at 11:18:05 on 23 October 2014</span>
+  </div>
+  <div class="body">
+Hi Emil,
+I'm thinking on using a HC-SR04 to measure not the distance but the velocity of the flow (lets call it the wind) that exists between the HC-SR04 and an obstacle in front of it. Since the distance (L) is a fixed and well known quantity I could do this... 
+The theory is:
+C -&gt; speed of sound = 343 m/s (with correction for temperature...)
+t1=L/(C+V) -&gt; time to go and reach the obstacle... assuming V is going in the direction of the obstacle...
+t2=L/(C-V) -&gt; time to return...
+t=t1+t2 -&gt; quantity measured by the HC-SR04
+Some algebra gives:
+equation 1 t=2LC/(C^2-V^2)
+equation 2 V=sqrt(C^2-2LC/t)
+The problem is that I have to be able to discriminate V with at least 0.5 m/s resolution which implies a better temporal resolution which the HC-SR04 cannot give, because it only have 3 mm spatial resolution and that corresponds to a temporal resolution Tr=0.003/343=8.74636E-06 s. 
+So for example in order to distinguish between V=8 m/s and V=8.5 m/s, using equation 1 and Tr gives L&gt;21.37 meters. A sonic sensor with a spatial resolution of 0.3 mm requires L&gt;2.137 m which is already an acceptable value, but such sensors are too much expensive for my budget. 
+Using 2 HC-SR04 in front of each other and putting one receiving the signal transmitted by the other and vice-versa (don't know if it is possible...) I would know t1 and t2 and C would cancel in the V equation:
+V=L(1/t1-1/t2)/2
+but I still have the problem of temporal resolution.
+Again, to discriminate V=8 m/s from V=8.5 m/s I still need L&gt;2.16 m which is a very large distance to put 2 sonic sensors in front of each other (only one sensor and a rigid obstacle would be more feasible...)
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 15:16:02 on 25 October 2014</span>
+  </div>
+  <div class="body">
+Without a phase comparator you cannot expect a better resolution than lambda/2 which in our case is 343/40e3/2 or about 4mm. The original HC-SR04 cannot achieve even that because it uses polling to read the input and also it may miss a pulse or two. Even with my revised schematics you'll only be able to get down to some 4mm resolution (and you need to write a proper detection algorithm not just relying on the first pulse). If you then have the time to average over a dozen of readings maybe you'll get bellow 1mm. The theoretical limit is given by the processor resolution (343/12e6 or 30um). You don't need 2 sensors, just one with a fixed hard reflector (a dense wood piece) will do.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">joao
+    <span class="date">Submitted at 20:24:51 on 25 October 2014</span>
+  </div>
+  <div class="body">
+I also thought on doing several readings. I will do a dozen readings and then take the mode. What I want is to have 4 wind values each second. The problem in using only one sonic sensor is that the velocity of sound (dependent on temperature) does not cancel in the V equation and since these sensors are so cheap i want to use two because doing it i don't have to care about C.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">joao
+    <span class="date">Submitted at 20:08:27 on 29 October 2014</span>
+  </div>
+  <div class="body">
+I'm trying two sonic sensors in front of each other. one hs-sr04 and one dyp me007 since i don't have 2 hs-sr04 to test. I use the same trig pin (12) in arduino to trigger both sensors and I'm reading the echo pin of the hs-sr04, and the first time to arrive is the signal from the dyp me007 as expected. The second time to arrive is the echo from hs-sr04 itself with the dyp being the obstacle. Now the problem is that although the echo is accurate (1760 us for a 30 cm distance) the signal from the Dyp arrives too soon!! (only 700 us when it should be 1760/2 us). Inspecting the echo pin of the dyp i have the opposite!! The signal coming from the hs-sr04 arrives too late (947 us instead of 1760/2 us). Any clues?
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Nejaet
+    <span class="date">Submitted at 10:36:26 on 31 October 2014</span>
+  </div>
+  <div class="body">
+Really enjoyed this article post.Really looking forward to read more. Will read on...
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">gabahr
+    <span class="date">Submitted at 16:59:42 on 3 November 2014</span>
+  </div>
+  <div class="body">
+Hi Emil, great job on everything, I am also trying to modifie this unit, I wanted to leave a comment on something that was discussed here and know what you think. I talk to one of my good teachers of analog signal, He first suggested to use a better quality op amp as the Lm324 are quite old and they tend to emplify a lot of noise. He thinks something newer like a mcp6024 would really help. (told me something about old op amps having a big offset or something.)  The other important thing is that since ultrasound are not linear and the frequency can change depending on the distance, temperature, etc the pass band filter should not necessarily be set at 40khz. The teacher believes 18kHz is quite low for a 4m distance, but it could be because of the poor quality of the transducers and clock so they adapted the pass band in consequence.  What results have you got when centering the pass band to 40khz ?
+
+Thanks  
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">joao
+    <span class="date">Submitted at 22:09:08 on 8 November 2014</span>
+  </div>
+  <div class="body">
+is there a way to put the echo pin to high without triigering  it (and so without transmitting sound)  and then return to low when receive sound from another sensor?
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">joao
+    <span class="date">Submitted at 22:38:10 on 10 November 2014</span>
+  </div>
+  <div class="body">
+I have wind now.... Checked on wind tunnel... The results are fair... Its a pitty that I cannot have more than 4 us temporal resolution which corresponds about 0.8m/s (L=0.3 m).. I have the time to take the mode of 50 measurements of north/south and 50 measurements of south/north each second and then the two modes are used to calculate the wind each second.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">joao
+    <span class="date">Submitted at 00:16:32 on 11 November 2014</span>
+  </div>
+  <div class="body">
+After all I learned that 4 us is arduino related... It has to do with micros() function that I need to call to know the time that the eco pin in high. My implementation and (by the way) the arduino newping library and pulsein all use micros(). So the temporal resolution is also arduino related. The only way of using both HC-SR04 and arduino and having better than 0.8 m/s velocity resolution is using a larger L (say 1.8 meters which gives 0,13 m/s) but this is not a practical anemometer...So close of building a 30 dollars ultrasonic anemometer... :-(
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Graham
+    <span class="date">Submitted at 09:01:44 on 11 November 2014</span>
+  </div>
+  <div class="body">
+Vasja says "I replaced resistor R13 to 2K2 and R11 to 17K and start testing" - he then had problems.
+
+I wonder if he or anyone found that the extra gain was as predicted?
+Does anyone actually have a fully working "gain enhanced" original board -  and what extra range do you get?
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Jichang Tan
+    <span class="date">Submitted at 04:44:01 on 23 November 2014</span>
+  </div>
+  <div class="body">
+Hello, Emil, how is the AtTiny doing? Have you finished any working prototype to share with us? Thanks. (I am thinking to rewire the circuit to an Arduino and get the signals handled with a more powerful processor.)
+</div>
+  </div>
+ 
+  <div class="comment author">
+  <div class="title">Emil
+    <span class="date">Submitted at 21:50:55 on 26 November 2014</span>
+  </div>
+  <div class="body">
+Unfortunately I haven't done anything else with this project because I've been busy at work and with my other projects. I wanted these sensors for my 2 wheel balancing robot so once I 'll progress more with the robot mechanics I will pick this up again.
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">Leon
+    <span class="date">Submitted at 16:16:56 on 5 January 2015</span>
+  </div>
+  <div class="body">
+Hello! Can you tell me how did you determined resistance of R13 and R11 that you got peak at 40KHz. Did you calculate with equation or on some other way? (sorry for bad english).
+</div>
+  </div>
+ 
+  <div class="comment">
+  <div class="title">lejaune
+    <span class="date">Submitted at 22:08:56 on 8 January 2015</span>
+  </div>
+  <div class="body">
+Hi Joao, Interesting discussion here. I am doing something similar to what you are doing, that is to measure the wind velocity in my backyard, between two posts. I am thinking the simplest way is to move the Tx speaker off the board and place it on an opposite post. Of course, there will be some wires, but I think the signal quality should be better going from Tx to Rx directly without relying on reflection, (and hopefully the wires don't act as transmission media). So the equation will simply be V = L(1/T - 1/T0) where T is the propagation time and T0 is the propagation time when there is no wind, which can be calibrated. I my case, L is roughly 3 meters. So if the time resolution is 4us, then resolution of V is good enough.
+I am still waiting for the HC-SR04 board to arrive.
+</div>
+  </div>
+ 
+ </blockquote>
+
+
+    
+<h3>Add A Comment</h3>
+<blockquote>
+<form action="http://uglyduck.ath.cx/cgi-bin/comments.cgi" method="post">
+<input type="hidden" name="id" value="archive/2014/01/Making_a_better_HC_SR04_Echo_Locator.html">
+<input type="hidden" name="captcha" value="">
+<table>
+<tbody><tr><td>Your Name</td>
+    <td><input type="text" size="55" name="name"></td></tr>
+<tr><td>Your EMail</td>
+    <td><input type="text" size="55" name="mail"></td></tr>
+<tr><td colspan="2">Your Comment<br>
+<textarea name="body" rows="10" cols="60"></textarea></td></tr>
+<tr><td></td><td><input type="submit"></td></tr>
+</tbody></table>
+</form>
+<p>Your submission will be ignored if any field is left blank or if you include clickable links. Your email address will not be displayed.</p>
+</blockquote>
+
+
+    <div id="sidebar">
+      <center><a href="http://uglyduck.ath.cx/ep/titles.html"><font size="5" color="#0098af">All Titles</font></a><br>
+      <a href="http://uglyduck.ath.cx/ep/titles.html"><img src="./Emil's Projects  Making a better HC-SR04 Echo Locator_files/oshw-logo.png"></a></center>
+      
+      <h2>Archive</h2>
+      <ul>
+        
+        <li>2014
+          <ul>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2014/01/">January (1)</a></li>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2014/04/">April (1)</a></li>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2014/08/">August (1)</a></li>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2014/09/">September (1)</a></li>
+            
+        </ul></li>
+        
+        <li>2013
+          <ul>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2013/04/">April (1)</a></li>
+            
+        </ul></li>
+        
+        <li>2012
+          <ul>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2012/06/">June (2)</a></li>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2012/12/">December (1)</a></li>
+            
+        </ul></li>
+        
+        <li>2010
+          <ul>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2010/04/">April (1)</a></li>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2010/09/">September (1)</a></li>
+            
+        </ul></li>
+        
+        <li>2006
+          <ul>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2006/03/">March (1)</a></li>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2006/12/">December (1)</a></li>
+            
+        </ul></li>
+        
+        <li>2005
+          <ul>
+            
+            <li><a href="http://uglyduck.ath.cx/ep/archive/2005/08/">August (1)</a></li>
+            
+        </ul></li>
+        
+      </ul>
+      
+      
+      <h2>Tags</h2>
+      <ul>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/antiradar">antiradar (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/arduino">arduino (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/avr">avr (4)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/c%20compiler">c compiler (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/clock">clock (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/code%20obfuscation">code obfuscation (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/disassembler">disassembler (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/gazelle">gazelle (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/gps">gps (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/graphic%20lcd">graphic lcd (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/hc-sr04">hc-sr04 (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/i2c">i2c (2)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/ida">ida (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/illumination">illumination (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/interpreter">interpreter (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/jtag">jtag (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/kint">kint (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/led">led (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/linux">linux (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/programmers">programmers (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/reverse%20engineering">reverse engineering (4)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/rgb">rgb (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/system76">system76 (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/tektronix">tektronix (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/tla">tla (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/ublox">ublox (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/ultrasound">ultrasound (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/vcd">vcd (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/wifi">wifi (1)</a></li>
+        
+        <li><a href="http://uglyduck.ath.cx/ep/tags/xpdf">xpdf (1)</a></li>
+        
+      </ul>
+      
+    </div>
+  
+
+</body></html>

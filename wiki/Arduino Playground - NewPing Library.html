@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)http://playground.arduino.cc/Code/NewPing -->
+<html class=" js no-touch boxshadow opacity fontface svg inlinesvg svgclippaths no-ie8compat" lang="en"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./Arduino Playground - NewPing Library_files/cb=gapi.loaded_1" async=""></script><script src="./Arduino Playground - NewPing Library_files/cb=gapi.loaded_0" async=""></script><script type="text/javascript" src="./Arduino Playground - NewPing Library_files/menu169.js"></script><script type="text/javascript" src="./Arduino Playground - NewPing Library_files/plusone.js" gapi_processed="true"></script><script type="text/javascript" src="./Arduino Playground - NewPing Library_files/widgets.js"></script><script type="text/javascript" src="./Arduino Playground - NewPing Library_files/es.js"></script>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  	<meta charset="utf-8">
+
+	<title>Arduino Playground - NewPing Library </title>
+	<link rel="shortcut icon" type="image/x-icon" href="http://playground.arduino.cc/favicon.png">
+
+	<link rel="stylesheet" href="./Arduino Playground - NewPing Library_files/fonts.css" type="text/css">
+	<link rel="stylesheet" href="http://arduino.cc/css/arduino-icons.css">
+	<link rel="stylesheet" href="http://arduino.cc/css/animation.css"><!--[if IE 7]>
+	<link rel="stylesheet" href="http://arduino.cc/css/arduino-icons-ie7.css"><![endif]-->
+	<!--[if gte IE 9]><!-->
+	<link rel="stylesheet" href="./Arduino Playground - NewPing Library_files/foundation2.css" type="text/css">
+	<!--[endif]---->
+	<!--[if IE 8]>
+		<link rel='stylesheet' href='http://arduino.cc/css/foundation_ie8.css' type='text/css' />	
+	<![endif]-->	
+	<link rel="stylesheet" href="./Arduino Playground - NewPing Library_files/arduino_code_highlight.css" type="text/css">
+	<link rel="stylesheet" type="text/css" media="screen" href="./Arduino Playground - NewPing Library_files/typeplate.css">
+	<link rel="stylesheet" href="./Arduino Playground - NewPing Library_files/arduinoWide_SSO.css" type="text/css">
+	<link rel="stylesheet" href="./Arduino Playground - NewPing Library_files/common.css" type="text/css">	  
+	<link href="https://plus.google.com/114839908922424087554" rel="publisher">
+	<script type="text/javascript" async="" src="./Arduino Playground - NewPing Library_files/ga.js"></script><script src="./Arduino Playground - NewPing Library_files/custom.modernizr.js"></script>
+<link rel="stylesheet" type="text/css" href="./Arduino Playground - NewPing Library_files/widget009.old.css" media="all"><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(http://static.ak.fbcdn.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(http://static.ak.fbcdn.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif)}.fb_dialog_close_icon:active{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(http://static.ak.fbcdn.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif)}.fb_dialog_loader{background-color:#f6f7f8;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #3a5795;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{max-height:590px;min-height:590px;max-width:500px;min-width:500px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;left:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #2f477a;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f6f7f8;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}</style></head>
+<body data-twttr-rendered="true" style="padding-top: 40px;"><iframe id="twttrHubFrameSecure" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" name="twttrHubFrameSecure" src="./Arduino Playground - NewPing Library_files/hub.fe4e93d64f1afc988e99833088f71057(1).html" style="position: absolute; top: -9999em; width: 10px; height: 10px;"></iframe><iframe id="twttrHubFrame" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" name="twttrHubFrame" src="./Arduino Playground - NewPing Library_files/hub.fe4e93d64f1afc988e99833088f71057.html" style="position: absolute; top: -9999em; width: 10px; height: 10px;"></iframe>
+	<div id="menuWings" class="fixed" style="display: block;"></div>
+	<div id="page">
+		
+<script>
+	var userAgent = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
+	if(userAgent.indexOf('mac')>0){
+		$("head").append('<style type="text/css">@-moz-document url-prefix() {h1 a, h2 a, h3 a, h4 a, h5 a, h1 a:hover, h2 a:hover, th a, th a:hover, h3 a:hover, h4 a:hover, h5 a:hover, #wikitext h2 a:hover, #wikitext h3 a:hover, #wikitext h4 a:hover {padding-bottom: 0.5em!important;} #pageheader .search input{font-family: "TyponineSans Regular 18";} #pagefooter .monospace{margin-top: -4px;} #navWrapper ul.left &gt; li{margin-top: -2px; padding-bottom: 2px;}#navWrapper ul.right &gt; li{margin-top: -5px; padding-bottom: 5px;}#navWrapper ul.right &gt; li ul{margin-top: 4px;} .slider-container .fixed-caption p{padding:8px 0 14px 0}}</style>');
+	}
+</script>
+
+<!--[if IE]>
+<link rel='stylesheet' href='https://id.arduino.cc//css/ie-monospace.css' type='text/css' />
+<![endif]-->
+
+<div id="menuWings" class="fixed"></div>
+
+<!--[if IE 8]>
+<div class="alert-box panel ie8alert">
+  <p><strong>Arduino.cc offers limited compatibility for Internet Explorer 8. Get a modern browser as Chrome, Firefox or Safari.</strong></p>
+  <a href="" class="close">&times;</a>
+</div>
+<![endif]-->
+
+<div id="pageheader">
+	<div class="row">
+		<div class="small-6 large-8 eight columns">
+			<div class="title"><a href="http://arduino.cc/">Arduino</a></div>
+		</div>
+		<div class="small-6 large-4 four columns search">
+			<div class="row collapse">
+				<form method="GET" action="http://www.google.com/search">
+	<div class="small-12 twelve columns">
+		<i class="icon-search-2"></i>
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="hidden" name="oe" value="UTF-8">
+		<input type="text" name="q" size="25" maxlength="255" value="" placeholder="Search the Arduino Playground">
+		<input type="submit" name="btnG" value="search">
+		<input type="hidden" name="domains" value="http://playground.arduino.cc">
+		<input type="hidden" name="sitesearch" value="http://playground.arduino.cc">
+	</div>
+</form>			</div>
+		</div>
+	</div>
+
+	<!--[if gte IE 9]><!-->
+	<div id="navWrapper" class="sticky fixed">
+	<!--[endif]---->
+	<!--[if IE 8]>
+		<div id="navWrapper">
+	<![endif]-->
+		<nav class="top-bar" data-options="is_hover:true">
+			<ul class="title-area">
+				<li class="name"></li>
+			</ul>
+
+			
+		<section class="top-bar-section">
+				<ul class="left">
+					<li id="navLogo" style="display: block;">
+						<a href="http://arduino.cc/">
+							<img src="./Arduino Playground - NewPing Library_files/logo_46.png" alt="userpicture">
+						</a>
+					</li>
+					<li id="navHome" style="display: none;"><a href="http://arduino.cc/">Home</a></li>
+					<li><a href="http://store.arduino.cc/">Buy</a></li>
+					<li><a href="http://arduino.cc/en/Main/Software">Download</a></li>
+					<li class="has-dropdown not-click"><a href="http://arduino.cc/en/Main/Products">Products</a>
+						<ul class="dropdown"><li class="title back js-generated"><h5><a href="http://playground.arduino.cc/Code/NewPing#"><span class="backArrow">Back</span></a></h5></li><li><a class="parent-link js-generated" href="http://arduino.cc/en/Main/Products">Products</a></li>
+							<li><a href="http://arduino.cc/en/Main/Products">Arduino</a></li>
+							<li><a href="http://arduino.cc/en/ArduinoAtHeart/Products">AtHeart</a></li>
+							<li><a href="http://arduino.cc/en/ArduinoCertified/Products">Certified</a></li>
+						</ul>
+					</li>
+					<li class="has-dropdown active not-click"><a href="http://playground.arduino.cc/Code/NewPing#">Learning</a>
+						<ul class="dropdown"><li class="title back js-generated"><h5><a href="http://playground.arduino.cc/Code/NewPing#"><span class="backArrow">Back</span></a></h5></li>
+							<li><a href="http://arduino.cc/en/Guide/HomePage">Getting started</a></li>
+							<li><a href="http://arduino.cc/en/Tutorial/HomePage">Examples</a></li>
+							<li><a href="http://arduino.cc/en/Reference/HomePage">Reference</a></li>
+							<li><a href="http://playground.arduino.cc/">Playground</a></li>
+						</ul>
+					</li>
+					<li><a href="http://forum.arduino.cc/">Forum</a></li>
+					<li class="has-dropdown not-click"><a href="http://playground.arduino.cc/Code/NewPing#">Support</a>
+						<ul class="dropdown"><li class="title back js-generated"><h5><a href="http://playground.arduino.cc/Code/NewPing#"><span class="backArrow">Back</span></a></h5></li>
+							<li><a href="http://arduino.cc/en/Main/FAQ">FAQ</a></li>
+							<li><a href="http://arduino.cc/en/ContactUs">Contact Us</a></li>
+						</ul>
+					</li>
+					<li><a href="http://blog.arduino.cc/">Blog</a></li>
+				</ul>
+
+								<ul class="right">
+					<li><a href="https://id.arduino.cc/auth/login/?returnurl=http%3A%2F%2Fplayground.arduino.cc%2FCode%2FNewPing" class="cart">LOG IN</a></li>
+					<li><a href="https://id.arduino.cc/auth/signup" class="cart">SIGN UP</a></li>
+				</ul>
+							</section></nav>
+	</div>
+</div>
+
+
+
+		<br class="clear">
+
+		<!--PageLeftFmt-->
+		<div id="pagenav">
+			<p><em>The <a class="wikilink" href="http://playground.arduino.cc/Main/HomePage">playground</a> is a publicly-editable wiki about <a class="urllink" href="http://www.arduino.cc/" rel="nofollow">Arduino</a>.</em>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/ManualsAndCurriculum">Manuals and Curriculum</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="urllink" href="http://arduino.stackexchange.com/" rel="nofollow">Arduino StackExchange</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/ArduinoCoreHardware">Board Setup and Configuration</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/DevelopmentTools">Development Tools</a>
+</p>
+<p class="vspace"></p><p class="sidehead"> <a class="wikilink" href="http://playground.arduino.cc/Main/ArduinoOnOtherAtmelChips">Arduino on other Atmel Chips</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithHardware">Interfacing With Hardware</a>
+</p><ul><li><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithHardware#Output">Output</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithHardware#InputTOC">Input</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithHardware#ui">User Interface</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithHardware#Storage">Storage</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithHardware#Communication">Communication</a> 
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/IntWithHW-PwrSup">Power supplies</a> 
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithHardware#General">General</a> 
+</li></ul><p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/InterfacingWithSoftware">Interfacing with Software</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/GeneralCodeLibrary">User Code Library</a>
+</p><ul><li><a class="wikilink" href="http://playground.arduino.cc/Main/SketchList">Snippets and Sketches</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/LibraryList">Libraries</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/TutorialList">Tutorials</a>
+</li></ul><p class="vspace"></p><p class="sidehead"><a class="urllink" href="http://code.google.com/p/arduino/issues/list" rel="nofollow">Suggestions &amp; Bugs</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/ElectroInfoResources">Electronics Technique</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/Resources">Sources for Electronic Parts</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/SimilarBoards">Related Hardware and Initiatives</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="urllink" href="http://playground.arduino.cc/Main/People" rel="nofollow">Arduino People/Groups &amp; Sites</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="urllink" href="http://playground.arduino.cc/Projects/ArduinoUsers" rel="nofollow">Exhibition</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="urllink" href="http://playground.arduino.cc/Projects/Ideas" rel="nofollow">Project Ideas</a>
+</p>
+<p class="vspace"></p><p class="sidehead"><a class="wikilink" href="http://playground.arduino.cc/Main/Languages">Languages</a>
+</p>
+<p class="vspace"></p><hr>
+<p class="vspace"></p><p class="sidehead"> <a class="wikilink" href="http://playground.arduino.cc/Main/Participate">PARTICIPATE</a>
+</p><ul><li><a class="urllink" href="http://code.google.com/p/arduino/issues/list" rel="nofollow">Suggestions</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/Participate#contribrules">Formatting guidelines</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Site/AllRecentChanges">All recent changes</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/PmWiki/PmWiki">PmWiki</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/Main/WikiSandbox">WikiSandBox training</a>
+</li><li><a class="wikilink" href="http://playground.arduino.cc/PmWiki/BasicEditing">Basic Editing</a>
+</li><li><a class="urllink" href="http://www.pmwiki.org/wiki/Cookbook/CookbookBasics" rel="nofollow">Cookbook (addons)</a>
+</li><li><a class="urllink" href="http://www.pmwiki.org/wiki/PmWiki/DocumentationIndex" rel="nofollow">Documentation index</a>
+<p class="vspace"></p></li><li><a class="urllink" href="http://www.bartoloilliano.com/arduino-tutorial-costruire-un-drone-con-webcam-telecomandato-da-pc-tramite-csharp.html" rel="nofollow">Drone with Arduino</a>
+<p class="vspace"></p></li><li><a class="urllink" href="http://arduinothermostat.blogspot.co.uk/" rel="nofollow">Thermostat with Arduino</a>
+</li></ul><p class="vspace"></p>
+
+		</div>
+		<!--/PageLeftFmt-->
+
+		
+
+		<div id="pagetext" class="playground">
+				<!--PageText-->
+<div id="wikitext">
+<p>
+</p>
+<p class="vspace"></p><pre style="background-color: #eeeeee; color: #000000; border: 1px dotted black; font-size: 11pt; padding: 2px;">NewPing Library for Arduino
+Author:  Tim Eckel
+Contact: tim@leethost.com
+</pre>
+<p class="vspace"></p><hr>
+<h1>Navigation</h1>
+<ul><li><a href="http://playground.arduino.cc/Code/NewPing#History">History</a>
+</li><li><a href="http://playground.arduino.cc/Code/NewPing#Background">Background</a>
+</li><li><a href="http://playground.arduino.cc/Code/NewPing#Features">Features</a>
+</li><li><a href="http://playground.arduino.cc/Code/NewPing#Download">Download</a>
+</li><li><a href="http://playground.arduino.cc/Code/NewPing#Constructor">Constructor</a>
+</li><li><a href="http://playground.arduino.cc/Code/NewPing#Methods">Methods</a>
+</li><li><a href="http://playground.arduino.cc/Code/NewPing#Example">Examples</a>
+</li><li><a href="http://playground.arduino.cc/Code/NewPing#Information">Information about this page</a>
+</li></ul><p class="vspace"></p><hr>
+<h1><a name="History" id="History"></a>History</h1>
+<table border="1" width="100%"><tbody><tr><th>Release</th><th>Date</th><th>Changes</th></tr>
+<tr><td>1.5</td><td>8/15/2012</td><td align="left">New ping_median() method does multiple pings and returns the median (digital filter).</td></tr>
+<tr><td>1.4</td><td>7/14/2012</td><td>Interface with sensors using only one Arduino pin.</td></tr>
+<tr><td>1.3</td><td>6/8/2012</td><td>Supports a timer-based ping method.</td></tr>
+<tr><td>1.2</td><td>5/25/2012</td><td>Rebuilt the ping timing code from scratch, now yields very accurate results.</td></tr>
+<tr><td>1.1</td><td>5/16/2012</td><td>Uses port registers for ultra-fast and lean code.</td></tr>
+<tr><td>1.0</td><td>5/15/2012</td><td>Initial Release.</td></tr>
+</tbody></table><hr>
+<h1><a name="Background" id="Background"></a>Background</h1>
+<p>When I first received an ultrasonic sensor I was not happy with how poorly it performed. I soon realized the problem wasn't the sensor, it was the available ping and ultrasonic libraries causing the problem. The <span class="wikiword">NewPing</span> library totally fixes these problems, adds many new features, and breathes new life into these very affordable distance sensors.
+</p>
+<p class="vspace"></p><hr>
+<h1><a name="Features" id="Features"></a>Features</h1>
+<ul><li>Works with many different ultrasonic sensor models: <span class="wikiword">SR04</span>, <span class="wikiword">SRF05</span>, <span class="wikiword">SRF06</span>, DYP-<span class="wikiword">ME007</span> &amp; Parallax PING)))™.
+</li><li>Option to interface with all but the <span class="wikiword">SRF06</span> sensor using only one Arduino pin.
+</li><li>Doesn't lag for a full second if no ping echo is received like all other ultrasonic libraries.
+</li><li>Ping sensors consistently and reliably at up to 30 times per second.
+</li><li>Timer interrupt method for event-driven sketches.
+</li><li>Built-in digital filter method ping_median() for easy error correction.
+</li><li>Uses port registers when accessing pins for faster execution and smaller code size.
+</li><li>Allows setting of a maximum distance where pings beyond that distance are read as no ping "clear".
+</li><li>Ease of using multiple sensors (example sketch with 15 sensors).
+</li><li>More accurate distance calculation (cm, inches &amp; uS).
+</li><li>Doesn't use pulseIn, which is slow and gives incorrect results with some ultrasonic sensor models.
+</li><li>Actively developed with features being added and bugs/issues addressed.
+</li></ul><p class="vspace"></p><hr>
+<h1><a name="Download" id="Download"></a>Download </h1>
+<p>Download here: <strong><a class="urllink" href="https://code.google.com/p/arduino-new-ping/downloads/detail?name=NewPing_v1.5.zip&can=2&q=" rel="nofollow">Download NewPing Library</a></strong>
+</p>
+<p class="vspace"></p><dl><dt> </dt><dd> Put the "<span class="wikiword">NewPing</span>" folder in "libraries\".
+<p class="vspace"></p></dd><dt> </dt><dd> In the Arduino IDE, create a new sketch (or open one) and select from the menubar "Sktech-&gt;Import Library-&gt;<span class="wikiword">NewPing</span>".
+</dd></dl><p class="vspace"></p><hr>
+<h1><a name="Constructor" id="Constructor"></a>Constructor</h1>
+<p><strong><span class="wikiword">NewPing</span> sonar(trigger_pin, echo_pin [, max_cm_distance]);</strong>
+</p>
+<p class="vspace"></p><p>Example:<br><strong><span class="wikiword">NewPing</span> sonar(12, 11, 200);</strong>
+</p>
+<p class="vspace"></p><p>This initializes <span class="wikiword">NewPing</span> to use pin 12 for trigger output, pin 11 for echo input, with a maximum ping distance of 200cm.  max_cm_distance is optional [default = 500cm].
+</p>
+<p class="vspace"></p><hr>
+<h1><a name="Methods" id="Methods"></a>Methods</h1>
+<ul><li><strong>sonar.ping();</strong> - Send a ping, returns the echo time in microseconds or 0 (zero) if no ping echo within set distance limit
+</li><li><strong>sonar.ping_in();</strong> - Send a ping, returns the distance in inches or 0 (zero) if no ping echo within set distance limit
+</li><li><strong>sonar.ping_cm();</strong> - Send a ping, returns the distance in centimeters or 0 (zero) if no ping echo within set distance limit
+</li><li><strong>sonar.ping_median(iterations);</strong> - Do multiple pings (default=5), discard out of range pings and return median in microseconds
+</li><li><strong>sonar.convert_in(echoTime);</strong> - Converts microseconds to distance in inches
+</li><li><strong>sonar.convert_cm(echoTime);</strong> - Converts microseconds to distance in centimeters
+</li><li><strong>sonar.ping_timer(function);</strong> - Send a ping and call function to test if ping is complete.
+</li><li><strong>sonar.check_timer();</strong> - Check if ping has returned within the set distance limit.
+</li><li><strong>timer_us(frequency, function);</strong> - Call function every frequency microseconds.
+</li><li><strong>timer_ms(frequency, function);</strong> - Call function every frequency milliseconds.
+</li><li><strong>timer_stop();</strong> - Stop the timer.
+</li></ul><p class="vspace"></p><hr>
+<h1><a name="Example" id="Example"></a>Examples</h1>
+<h2><a name="SampleNewPingSketch" id="SampleNewPingSketch"></a>Sample <span class="wikiword">NewPing</span> Sketch</h2>
+<p>
+</p><div class="sourceblock " id="sourceblock1">
+  <div class="sourceblocktext"><div class="c"><ol><li class="li1"><div class="de1"><span class="co2">#include &lt;NewPing.h&gt;</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li1"><div class="de1"><span class="co2">#define TRIGGER_PIN &nbsp;12</span></div></li>
+<li class="li1"><div class="de1"><span class="co2">#define ECHO_PIN &nbsp; &nbsp; 11</span></div></li>
+<li class="li2"><div class="de2"><span class="co2">#define MAX_DISTANCE 200</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li1"><div class="de1">NewPing sonar<span class="br0">(</span>TRIGGER_PIN<span class="sy0">,</span> ECHO_PIN<span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li1"><div class="de1"><span class="kw4">void</span> setup<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span></div></li>
+<li class="li2"><div class="de2">&nbsp; Serial.<span class="me1">begin</span><span class="br0">(</span><span class="nu0">115200</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1"><span class="br0">}</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li1"><div class="de1"><span class="kw4">void</span> loop<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span></div></li>
+<li class="li1"><div class="de1">&nbsp; delay<span class="br0">(</span><span class="nu0">50</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li2"><div class="de2">&nbsp; <span class="kw4">int</span> uS <span class="sy0">=</span> sonar.<span class="me1">ping</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; Serial.<span class="me1">print</span><span class="br0">(</span><span class="st0">"Ping: "</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; Serial.<span class="me1">print</span><span class="br0">(</span>uS <span class="sy0">/</span> US_ROUNDTRIP_CM<span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; Serial.<span class="me1">println</span><span class="br0">(</span><span class="st0">"cm"</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1"><span class="br0">}</span></div></li>
+</ol></div></div>
+  <div class="sourceblocklink"><a href="http://playground.arduino.cc/Code/NewPing?action=sourceblock&num=1" type="text/plain">[Get Code]</a></div>
+</div>
+
+<p></p>
+<p class="vspace"></p><h2><a name="FifteenSensorNewPingSketch" id="FifteenSensorNewPingSketch"></a>15 Sensors Example Sketch</h2>
+<p>
+</p><div class="sourceblock " id="sourceblock2">
+  <div class="sourceblocktext"><div class="c"><ol><li class="li1"><div class="de1"><span class="co1">// ---------------------------------------------------------</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// This example code was used to successfully communicate</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// with 15 ultrasonic sensors. You can adjust the number of</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// sensors in your project by changing SONAR_NUM and the</span></div></li>
+<li class="li2"><div class="de2"><span class="co1">// number of NewPing objects in the "sonar" array. You also</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// need to change the pins for each sensor for the NewPing</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// objects. Each sensor is pinged at 33ms intervals. So, one</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// cycle of all sensors takes 495ms (33 * 15 = 495ms). The</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// results are sent to the "oneSensorCycle" function which</span></div></li>
+<li class="li2"><div class="de2"><span class="co1">// currently just displays the distance data. Your project</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// would normally process the sensor results in this</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// function (for example, decide if a robot needs to turn</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// and call the turn function). Keep in mind this example is</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// event-driven. Your complete sketch needs to be written so</span></div></li>
+<li class="li2"><div class="de2"><span class="co1">// there's no "delay" commands and the loop() cycles at</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// faster than a 33ms rate. If other processes take longer</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// than 33ms, you'll need to increase PING_INTERVAL so it</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// doesn't get behind.</span></div></li>
+<li class="li1"><div class="de1"><span class="co1">// ---------------------------------------------------------</span></div></li>
+<li class="li2"><div class="de2"><span class="co2">#include &lt;NewPing.h&gt;</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li1"><div class="de1"><span class="co2">#define SONAR_NUM &nbsp; &nbsp; 15 // Number or sensors.</span></div></li>
+<li class="li1"><div class="de1"><span class="co2">#define MAX_DISTANCE 200 // Max distance in cm.</span></div></li>
+<li class="li1"><div class="de1"><span class="co2">#define PING_INTERVAL 33 // Milliseconds between pings.</span></div></li>
+<li class="li2"><div class="de2">&nbsp;</div></li>
+<li class="li1"><div class="de1"><span class="kw4">unsigned</span> <span class="kw4">long</span> pingTimer<span class="br0">[</span>SONAR_NUM<span class="br0">]</span><span class="sy0">;</span> <span class="co1">// When each pings.</span></div></li>
+<li class="li1"><div class="de1"><span class="kw4">unsigned</span> <span class="kw4">int</span> cm<span class="br0">[</span>SONAR_NUM<span class="br0">]</span><span class="sy0">;</span> <span class="co1">// Store ping distances.</span></div></li>
+<li class="li1"><div class="de1"><span class="kw4">uint8_t</span> currentSensor <span class="sy0">=</span> <span class="nu0">0</span><span class="sy0">;</span> <span class="co1">// Which sensor is active.</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li2"><div class="de2">NewPing sonar<span class="br0">[</span>SONAR_NUM<span class="br0">]</span> <span class="sy0">=</span> <span class="br0">{</span> <span class="co1">// Sensor object array.</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">41</span><span class="sy0">,</span> <span class="nu0">42</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">43</span><span class="sy0">,</span> <span class="nu0">44</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">45</span><span class="sy0">,</span> <span class="nu0">20</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">21</span><span class="sy0">,</span> <span class="nu0">22</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li2"><div class="de2">&nbsp; NewPing<span class="br0">(</span><span class="nu0">23</span><span class="sy0">,</span> <span class="nu0">24</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">25</span><span class="sy0">,</span> <span class="nu0">26</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">27</span><span class="sy0">,</span> <span class="nu0">28</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">29</span><span class="sy0">,</span> <span class="nu0">30</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">31</span><span class="sy0">,</span> <span class="nu0">32</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li2"><div class="de2">&nbsp; NewPing<span class="br0">(</span><span class="nu0">34</span><span class="sy0">,</span> <span class="nu0">33</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">35</span><span class="sy0">,</span> <span class="nu0">36</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">37</span><span class="sy0">,</span> <span class="nu0">38</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">39</span><span class="sy0">,</span> <span class="nu0">40</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li1"><div class="de1">&nbsp; NewPing<span class="br0">(</span><span class="nu0">50</span><span class="sy0">,</span> <span class="nu0">51</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span><span class="sy0">,</span></div></li>
+<li class="li2"><div class="de2">&nbsp; NewPing<span class="br0">(</span><span class="nu0">52</span><span class="sy0">,</span> <span class="nu0">53</span><span class="sy0">,</span> MAX_DISTANCE<span class="br0">)</span></div></li>
+<li class="li1"><div class="de1"><span class="br0">}</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li1"><div class="de1"><span class="kw4">void</span> setup<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span></div></li>
+<li class="li1"><div class="de1">&nbsp; Serial.<span class="me1">begin</span><span class="br0">(</span><span class="nu0">115200</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li2"><div class="de2">&nbsp; pingTimer<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> <span class="sy0">=</span> millis<span class="br0">(</span><span class="br0">)</span> <span class="sy0">+</span> <span class="nu0">75</span><span class="sy0">;</span> <span class="co1">// First ping start in ms.</span></div></li>
+<li class="li1"><div class="de1">&nbsp; <span class="kw1">for</span> <span class="br0">(</span><span class="kw4">uint8_t</span> i <span class="sy0">=</span> <span class="nu0">1</span><span class="sy0">;</span> i <span class="sy0">&lt;</span> SONAR_NUM<span class="sy0">;</span> i<span class="sy0">++</span><span class="br0">)</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; pingTimer<span class="br0">[</span>i<span class="br0">]</span> <span class="sy0">=</span> pingTimer<span class="br0">[</span>i <span class="sy0">-</span> <span class="nu0">1</span><span class="br0">]</span> <span class="sy0">+</span> PING_INTERVAL<span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1"><span class="br0">}</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li2"><div class="de2"><span class="kw4">void</span> loop<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span></div></li>
+<li class="li1"><div class="de1">&nbsp; <span class="kw1">for</span> <span class="br0">(</span><span class="kw4">uint8_t</span> i <span class="sy0">=</span> <span class="nu0">0</span><span class="sy0">;</span> i <span class="sy0">&lt;</span> SONAR_NUM<span class="sy0">;</span> i<span class="sy0">++</span><span class="br0">)</span> <span class="br0">{</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; <span class="kw1">if</span> <span class="br0">(</span>millis<span class="br0">(</span><span class="br0">)</span> <span class="sy0">&gt;=</span> pingTimer<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span> <span class="br0">{</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; &nbsp; pingTimer<span class="br0">[</span>i<span class="br0">]</span> <span class="sy0">+=</span> PING_INTERVAL <span class="sy0">*</span> SONAR_NUM<span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; &nbsp; <span class="kw1">if</span> <span class="br0">(</span>i <span class="sy0">==</span> <span class="nu0">0</span> <span class="sy0">&amp;&amp;</span> currentSensor <span class="sy0">==</span> SONAR_NUM <span class="sy0">-</span> <span class="nu0">1</span><span class="br0">)</span></div></li>
+<li class="li2"><div class="de2">&nbsp; &nbsp; &nbsp; &nbsp; oneSensorCycle<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span> <span class="co1">// Do something with results.</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; &nbsp; sonar<span class="br0">[</span>currentSensor<span class="br0">]</span>.<span class="me1">timer_stop</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; &nbsp; currentSensor <span class="sy0">=</span> i<span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; &nbsp; cm<span class="br0">[</span>currentSensor<span class="br0">]</span> <span class="sy0">=</span> <span class="nu0">0</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; &nbsp; sonar<span class="br0">[</span>currentSensor<span class="br0">]</span>.<span class="me1">ping_timer</span><span class="br0">(</span>echoCheck<span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li2"><div class="de2">&nbsp; &nbsp; <span class="br0">}</span></div></li>
+<li class="li1"><div class="de1">&nbsp; <span class="br0">}</span></div></li>
+<li class="li1"><div class="de1">&nbsp; <span class="co1">// The rest of your code would go here.</span></div></li>
+<li class="li1"><div class="de1"><span class="br0">}</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li2"><div class="de2"><span class="kw4">void</span> echoCheck<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span> <span class="co1">// If ping echo, set distance to array.</span></div></li>
+<li class="li1"><div class="de1">&nbsp; <span class="kw1">if</span> <span class="br0">(</span>sonar<span class="br0">[</span>currentSensor<span class="br0">]</span>.<span class="me1">check_timer</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; cm<span class="br0">[</span>currentSensor<span class="br0">]</span> <span class="sy0">=</span> sonar<span class="br0">[</span>currentSensor<span class="br0">]</span>.<span class="me1">ping_result</span> <span class="sy0">/</span> US_ROUNDTRIP_CM<span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1"><span class="br0">}</span></div></li>
+<li class="li1"><div class="de1">&nbsp;</div></li>
+<li class="li2"><div class="de2"><span class="kw4">void</span> oneSensorCycle<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span> <span class="co1">// Do something with the results.</span></div></li>
+<li class="li1"><div class="de1">&nbsp; <span class="kw1">for</span> <span class="br0">(</span><span class="kw4">uint8_t</span> i <span class="sy0">=</span> <span class="nu0">0</span><span class="sy0">;</span> i <span class="sy0">&lt;</span> SONAR_NUM<span class="sy0">;</span> i<span class="sy0">++</span><span class="br0">)</span> <span class="br0">{</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; Serial.<span class="me1">print</span><span class="br0">(</span>i<span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; Serial.<span class="me1">print</span><span class="br0">(</span><span class="st0">"="</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; &nbsp; Serial.<span class="me1">print</span><span class="br0">(</span>cm<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li2"><div class="de2">&nbsp; &nbsp; Serial.<span class="me1">print</span><span class="br0">(</span><span class="st0">"cm "</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1">&nbsp; <span class="br0">}</span></div></li>
+<li class="li1"><div class="de1">&nbsp; Serial.<span class="me1">println</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li>
+<li class="li1"><div class="de1"><span class="br0">}</span></div></li>
+</ol></div></div>
+  <div class="sourceblocklink"><a href="http://playground.arduino.cc/Code/NewPing?action=sourceblock&num=2" type="text/plain">[Get Code]</a></div>
+</div>
+
+<p></p>
+<p class="vspace"></p><hr>
+<h1><a name="Information" id="Information"></a>Information about this page</h1>
+<table border="0" cellpadding="5" cellspacing="0"><tbody><tr><td valign="top"> Last Modified: 
+</td><td valign="top"> November 04, 2013, at 03:46 PM
+</td></tr><tr><td valign="top"> By:
+</td><td valign="top"> psychephylax 
+</td></tr></tbody></table>
+</div>
+
+
+				<!-- AddThis Button Style BEGIN -->
+<style>
+  .addthis_toolbox {
+    margin: 2em 0 1em;
+  }
+  .addthis_toolbox img {
+    float: left;
+    height: 25px;
+    margin-right: 10px;
+    width: auto;
+  }
+  .addthis_toolbox .social-container {
+    float: left;
+    height: 27px; 
+    width: auto; 
+  }
+  .addthis_toolbox .social-container .social-content {
+    float: left;
+    margin-top: 2px;
+    max-width: 0;
+    overflow: hidden;
+    -moz-transition: max-width .3s ease-out;
+    -webkit-transition: max-width .3s ease-out;
+    -o-transition: max-width .3s ease-out;
+    transition: max-width .3s ease-out;
+  }
+  .addthis_toolbox .social-container:hover .social-content {
+    max-width: 100px;
+    -moz-transition: max-width .2s ease-in;
+    -webkit-transition: max-width .2s ease-in;
+    -o-transition: max-width .2s ease-in;
+    transition: max-width .2s ease-in;
+  }
+  .addthis_toolbox .social-container .social-content a {
+    float: left;
+    margin-right: 5px;
+  }
+
+  .addthis_toolbox h3 {
+    font-size: 24px;
+    text-align: left;
+  }
+</style>
+<!-- AddThis Button Style END -->
+<!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style">
+  <h3>Share</h3>
+  <!-- FACEBOOK -->
+  <div class="social-container">
+    <img src="./Arduino Playground - NewPing Library_files/facebook.png">
+    <div class="social-content">
+      <a class="addthis_button_facebook_like at300b" fb:like:layout="button_count"><div class="fb-like fb_iframe_widget" data-ref=".VLUIFlCaXqU.like" data-layout="button_count" data-show_faces="false" data-action="like" data-width="90" data-font="arial" data-href="http://playground.arduino.cc/Code/NewPing" data-send="false" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=172525162793917&amp;font=arial&amp;href=http%3A%2F%2Fplayground.arduino.cc%2FCode%2FNewPing&amp;layout=button_count&amp;locale=es_LA&amp;ref=.VLUIFlCaXqU.like&amp;sdk=joey&amp;send=false&amp;show_faces=false&amp;width=90"><span style="vertical-align: bottom; width: 102px; height: 20px;"><iframe name="f3850ced64" width="90px" height="1000px" frameborder="0" allowtransparency="true" scrolling="no" title="fb:like Facebook Social Plugin" src="./Arduino Playground - NewPing Library_files/like.html" style="border: none; visibility: visible; width: 102px; height: 20px;" class=""></iframe></span></div></a>
+    </div>
+  </div>
+  <!-- TWITTER -->
+  <div class="social-container">
+    <img src="./Arduino Playground - NewPing Library_files/twitter.png">
+    <div class="social-content">
+      <a class="addthis_button_tweet at300b"><iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" src="./Arduino Playground - NewPing Library_files/tweet_button.c27d2d163408c0fe087fbfe1c687ce2b.en.html" class="twitter-share-button twitter-tweet-button twitter-share-button twitter-count-horizontal" title="Twitter Tweet Button" data-twttr-rendered="true" style="width: 107px; height: 20px;"></iframe></a>
+    </div>
+  </div>
+  <!-- PINTEREST -->
+  <div class="social-container">
+    <img src="./Arduino Playground - NewPing Library_files/pinterest.png">
+    <div class="social-content">
+      <a class="addthis_button_pinterest_pinit at300b" pi:pinit:url="http://www.addthis.com/features/pinterest" pi:pinit:media="http://www.addthis.com/cms-content/images/features/pinterest-lg.png"><iframe title="AddThis | Pinterest" frameborder="0" role="presentation" scrolling="no" allowtransparency="true" scrollbars="no" style="width:40px; height:25px;" src="./Arduino Playground - NewPing Library_files/pinit022.html"></iframe></a>
+    </div>
+  </div>
+  <!-- G+ -->
+  <div class="social-container">
+    <img src="./Arduino Playground - NewPing Library_files/gplus.png">
+    <div class="social-content">
+      <a class="addthis_button_google_plusone at300b" g:plusone:size="medium"><div id="___plusone_0" style="text-indent: 0px; margin: 0px; padding: 0px; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 90px; height: 20px; background: transparent;"><iframe frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 90px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px;" tabindex="0" vspace="0" width="100%" id="I0_1421150231611" name="I0_1421150231611" src="./Arduino Playground - NewPing Library_files/fastbutton.html" data-gapiattached="true" title="+1"></iframe></div></a>
+    </div>
+  </div>
+
+  <script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
+  <script type="text/javascript" src="./Arduino Playground - NewPing Library_files/addthis_widget.js"></script>
+<div class="atclear"></div></div>
+<!-- AddThis Button END -->
+
+			</div> <!-- eof pagetext -->
+			
+	</div><div id="_atssh" style="visibility: hidden; height: 1px; width: 1px; position: absolute; top: -9999px; z-index: 100000;"><iframe id="_atssh918" title="AddThis utility frame" src="./Arduino Playground - NewPing Library_files/sh184.html" style="height: 1px; width: 1px; position: absolute; top: 0px; z-index: 100000; border: 0px; left: 0px;"></iframe></div><script type="text/javascript" src="./Arduino Playground - NewPing Library_files/core177.js"></script> <!-- eof page -->
+		
+	<!--PageFooterFmt-->
+	<div id="pagefooter">
+		<div id="pagefooter" class="pagefooter">
+  <div class="row">
+    <div class="large-8 eight columns">
+      <div class="large-4 four columns newsletter-box">
+        <!-- Begin MailChimp Signup Form -->
+        <h6>Newsletter</h6>
+        <form action="http://arduino.us5.list-manage.com/subscribe/post?u=0140d17584d1c002bcd94d0e8&id=69a7d1abe4" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="">
+          <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="Enter your email to sign up" required="">
+          <i class="icon-right-small"></i>
+          <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="newsletter-button">
+        </form>
+        <!--End mc_embed_signup-->
+      </div>
+      <div class="clearfix"></div>
+      <ul class="inline-list">
+        <li class="monospace">©2015 Arduino</li>
+        <li><a href="http://arduino.cc/en/Main/CopyrightNotice">Copyright Notice</a></li>
+        <li><a href="http://arduino.cc/en/Main/ContactUs">Contact us</a></li>
+      </ul>
+    </div>
+    <div class="large-4 four columns">
+      <ul id="arduinoSocialLinks" class="arduino-social-links">
+        <li>
+          <a href="https://twitter.com/arduino">
+            <img src="./Arduino Playground - NewPing Library_files/twitter(1).png">
+          </a>
+        </li>
+        <li>
+          <a href="http://www.facebook.com/official.arduino">
+            <img src="./Arduino Playground - NewPing Library_files/facebook(1).png">
+          </a>
+        </li>
+        <li>
+          <a href="https://plus.google.com/+Arduino">
+            <img src="./Arduino Playground - NewPing Library_files/gplus(1).png">
+          </a>
+        </li>
+        <li>
+          <a href="http://www.flickr.com/photos/arduino_cc">
+            <img src="./Arduino Playground - NewPing Library_files/flickr.png">
+          </a>
+        </li>
+        <li>
+          <a href="http://youtube.com/arduinoteam">
+            <img src="./Arduino Playground - NewPing Library_files/youtube.png">
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+	</div>
+	<!--/PageFooterFmt-->
+	
+		
+	<script src="./Arduino Playground - NewPing Library_files/jquery-1.10.2.min.js"></script>
+	<!--[if gte IE 9]><!-->
+	<script src="./Arduino Playground - NewPing Library_files/foundation.min.js"></script>
+	<script src="./Arduino Playground - NewPing Library_files/foundation.topbar.custom.js"></script>
+	<script>
+	  $(document).foundation();
+	</script>
+	<!--<![endif]-->
+	<!--[if IE 8]>
+	<script src="http://arduino.cc/js/foundation_ie8.min.js"></script>
+	<script src="http://arduino.cc/js/ie8/jquery.foundation.alerts.js"></script>
+	<script src="http://arduino.cc/js/app.js"></script>
+	<![endif]-->
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-22581631-3']);
+	  _gaq.push(['_setDomainName', 'arduino.cc']);
+	  _gaq.push(['_trackPageview']);
+	
+	    (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+
+
+
+<div id="fb-root" class=" fb_reset"><script src="./Arduino Playground - NewPing Library_files/all.js" async=""></script><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="f1014e111c" frameborder="0" allowtransparency="true" scrolling="no" src="./Arduino Playground - NewPing Library_files/ping.html" style="display: none;"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_http" frameborder="0" allowtransparency="true" scrolling="no" id="fb_xdm_frame_http" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./Arduino Playground - NewPing Library_files/7r8gQb8MIqE.html" style="border: none;"></iframe><iframe name="fb_xdm_frame_https" frameborder="0" allowtransparency="true" scrolling="no" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./Arduino Playground - NewPing Library_files/7r8gQb8MIqE(1).html" style="border: none;"></iframe></div></div></div><iframe name="oauth2relay1701715708" id="oauth2relay1701715708" src="./Arduino Playground - NewPing Library_files/postmessageRelay.html" tabindex="-1" style="width: 1px; height: 1px; position: absolute; top: -100px;"></iframe></body></html>
